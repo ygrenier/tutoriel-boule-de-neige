@@ -176,6 +176,11 @@
     <Compile Include="Controllers\TodoItemController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DataObjects\TodoItem.cs" />
+    <Compile Include="Migrations\201512052118104_Initial.cs" />
+    <Compile Include="Migrations\201512052118104_Initial.Designer.cs">
+      <DependentUpon>201512052118104_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BouleDeNeigeContext.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -194,6 +199,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\BouleDeNeige - Web Deploy.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201512052118104_Initial.resx">
+      <DependentUpon>201512052118104_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
