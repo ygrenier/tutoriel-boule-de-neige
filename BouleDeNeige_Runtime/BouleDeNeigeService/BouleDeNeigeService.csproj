@@ -112,6 +112,7 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.20622.1351, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.4.0.2.206221351\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
       <Private>True</Private>
@@ -175,10 +176,15 @@
     <Compile Include="App_Start\Startup.MobileApp.cs" />
     <Compile Include="Controllers\TodoItemController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DataObjects\Joueur.cs" />
     <Compile Include="DataObjects\TodoItem.cs" />
     <Compile Include="Migrations\201512052118104_Initial.cs" />
     <Compile Include="Migrations\201512052118104_Initial.Designer.cs">
       <DependentUpon>201512052118104_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512052205120_AjoutJoueurs.cs" />
+    <Compile Include="Migrations\201512052205120_AjoutJoueurs.Designer.cs">
+      <DependentUpon>201512052205120_AjoutJoueurs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BouleDeNeigeContext.cs" />
@@ -203,6 +209,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201512052118104_Initial.resx">
       <DependentUpon>201512052118104_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512052205120_AjoutJoueurs.resx">
+      <DependentUpon>201512052205120_AjoutJoueurs.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
