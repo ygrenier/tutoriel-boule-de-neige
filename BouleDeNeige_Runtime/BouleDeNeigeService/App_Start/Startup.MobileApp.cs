@@ -9,6 +9,8 @@ using Microsoft.Azure.Mobile.Server.Config;
 using BouleDeNeigeService.DataObjects;
 using BouleDeNeigeService.Models;
 using Owin;
+using System.Data.Entity.Migrations;
+using BouleDeNeigeService.Migrations;
 
 namespace BouleDeNeigeService
 {
@@ -26,7 +28,9 @@ namespace BouleDeNeigeService
                 .ApplyTo(config);
 
             // Use Entity Framework Code First to create database tables based on your DbContext
-            Database.SetInitializer(new BouleDeNeigeInitializer());
+            //Database.SetInitializer(new BouleDeNeigeInitializer());
+            DbMigrator migrator = new DbMigrator(new BouleDeNeigeService.Migrations.Configuration());
+            migrator.Update();
 
             // To prevent Entity Framework from modifying your database schema, use a null database initializer
             // Database.SetInitializer<BouleDeNeigeContext>(null);

@@ -23,6 +23,8 @@ namespace BouleDeNeigeService.Models
         } 
 
         public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<Joueur> Joueurs { get; set; }
+        public DbSet<Lancer> Lancers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
