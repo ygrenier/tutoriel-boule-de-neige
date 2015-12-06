@@ -192,6 +192,10 @@
     <Compile Include="Migrations\201512052229515_AjoutLancers.Designer.cs">
       <DependentUpon>201512052229515_AjoutLancers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512060845215_AjouterPointsJoueur.cs" />
+    <Compile Include="Migrations\201512060845215_AjouterPointsJoueur.Designer.cs">
+      <DependentUpon>201512060845215_AjouterPointsJoueur.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BouleDeNeigeContext.cs" />
     <Compile Include="Startup.cs" />
@@ -221,6 +225,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512052229515_AjoutLancers.resx">
       <DependentUpon>201512052229515_AjoutLancers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512060845215_AjouterPointsJoueur.resx">
+      <DependentUpon>201512060845215_AjouterPointsJoueur.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

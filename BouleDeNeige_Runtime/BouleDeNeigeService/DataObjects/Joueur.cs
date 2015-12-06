@@ -15,5 +15,6 @@ namespace BouleDeNeigeService.DataObjects
         public int BoulesRestantes { get; set; }
         public int BoulesRecues { get; set; }
         public int BoulesLancees { get; set; }
+        public int Points { get; set; }
     }
 }

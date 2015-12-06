@@ -43,6 +43,7 @@ namespace BouleDeNeigeService.Controllers
             item.BoulesLancees = 0;
             item.BoulesRecues = 0;
             item.BoulesRestantes = 5;
+            item.Points = 0;
 
             Joueur current = await InsertAsync(item);
             return CreatedAtRoute("Tables", new { id = current.Id }, current);
