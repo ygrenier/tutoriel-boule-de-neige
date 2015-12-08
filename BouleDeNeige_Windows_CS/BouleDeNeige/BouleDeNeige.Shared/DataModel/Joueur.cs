@@ -1,16 +1,12 @@
-﻿using Microsoft.Azure.Mobile.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace BouleDeNeigeService.DataObjects
+namespace BouleDeNeige
 {
-    public class Joueur : EntityData
+    public class Joueur
     {
-        [Required, StringLength(128)]
+        public String Id { get; set; }
         public String Nom { get; set; }
         public int BoulesRestantes { get; set; }
         public int BoulesRecues { get; set; }
