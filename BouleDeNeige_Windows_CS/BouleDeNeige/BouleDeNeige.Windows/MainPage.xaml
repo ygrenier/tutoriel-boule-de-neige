@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <Grid Background="White">
-
+        
         <Grid Margin="50,50,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -64,5 +64,8 @@
             </Grid>
 
         </Grid>
+
+        <Button x:Name="btnTest" Content="Test" Width="120" Height="80" Click="btnTest_Click" />
+        
     </Grid>
 </Page>
