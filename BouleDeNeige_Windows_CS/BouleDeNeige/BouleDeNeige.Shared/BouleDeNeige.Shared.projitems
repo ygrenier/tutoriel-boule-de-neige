@@ -14,7 +14,6 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\Joueur.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\Lancer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModel\LancerUneBouleParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\TodoItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.cs" />
   </ItemGroup>
