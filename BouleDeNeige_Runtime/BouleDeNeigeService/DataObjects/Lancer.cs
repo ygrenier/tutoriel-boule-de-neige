@@ -19,5 +19,6 @@ namespace BouleDeNeigeService.DataObjects
         public String CibleId { get; set; }
         [ForeignKey("CibleId")]
         public virtual Joueur Cible { get; set; }
+        public bool Success { get; set; }
     }
 }

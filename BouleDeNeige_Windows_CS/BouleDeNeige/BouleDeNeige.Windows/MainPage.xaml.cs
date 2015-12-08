@@ -1,5 +1,8 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Windows.UI.Xaml.Controls;
 
 namespace BouleDeNeige
@@ -32,6 +35,24 @@ namespace BouleDeNeige
             }
             System.Diagnostics.Debug.WriteLine(j1.Id);
             System.Diagnostics.Debug.WriteLine(j2.Id);
+
+            try
+            {
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args["lanceur"] = j1.Id;
+                args["cible"] = j2.Id;
+                var lancer = await App.MobileService.InvokeApiAsync<Lancer>("lancer/LancerUneBoule", HttpMethod.Get, args);
+            }
+            catch(MobileServiceInvalidOperationException mex)
+            {
+                var jValue = Newtonsoft.Json.Linq.JToken.Parse(await mex.Response.Content.ReadAsStringAsync());
+                var s = (String)jValue["message"];
+                System.Diagnostics.Debug.WriteLine(s ?? mex.GetBaseException().Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.GetBaseException().Message);
+            }
         }
     }
 }
