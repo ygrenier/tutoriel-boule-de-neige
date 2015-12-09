@@ -18,14 +18,15 @@ namespace BouleDeNeige
 {
     sealed partial class MainPage: Page
     {
-        private MobileServiceCollection<TodoItem, TodoItem> items;
-        private IMobileServiceTable<TodoItem> todoTable = App.MobileService.GetTable<TodoItem>();
-        //private IMobileServiceSyncTable<TodoItem> todoTable = App.MobileService.GetSyncTable<TodoItem>(); // offline sync
-
         public MainPage()
         {
             this.InitializeComponent();
         }
+
+        /*
+        private MobileServiceCollection<TodoItem, TodoItem> items;
+        private IMobileServiceTable<TodoItem> todoTable = App.MobileService.GetTable<TodoItem>();
+        //private IMobileServiceSyncTable<TodoItem> todoTable = App.MobileService.GetSyncTable<TodoItem>(); // offline sync
 
         private async Task InsertTodoItem(TodoItem todoItem)
         {
@@ -125,5 +126,6 @@ namespace BouleDeNeige
         //}
 
         #endregion 
+        */
     }
 }

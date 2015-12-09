@@ -9,6 +9,7 @@ namespace BouleDeNeige
 {
     public sealed partial class MainPage : Page
     {
+        /*
         private async void btnTest_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             // Création d'une référence sur la table des joueurs
@@ -54,5 +55,6 @@ namespace BouleDeNeige
                 System.Diagnostics.Debug.WriteLine(ex.GetBaseException().Message);
             }
         }
+        */
     }
 }
