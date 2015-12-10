@@ -22,7 +22,36 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="18,0,18,0">
-            <Grid.RowDefinitions>
+            <StackPanel Margin="4">
+                <TextBlock FontFamily="Segoe UI Light" FontSize="22">Joueur</TextBlock>
+                <TextBox x:Name="tbNomJoueur" />
+                <Button x:Name="btnCreerJoueur" Content="Créer le joueur" HorizontalAlignment="Center" Click="btnCreerJoueur_Click" />
+                <Grid x:Name="grdJoueurInfos">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" FontWeight="Bold" HorizontalAlignment="Center" FontSize="13" Text="Points"/>
+                    <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Center" FontSize="13" Text="Boules restantes"/>
+                    <TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center" FontSize="13" Text="Boules lancées"/>
+                    <TextBlock Grid.Column="3" FontWeight="Bold" HorizontalAlignment="Center" FontSize="13" Text="Boules reçues"/>
+
+                    <TextBlock x:Name="tbPoints" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" FontSize="16" Text="0"/>
+                    <TextBlock x:Name="tbRestantes" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" FontSize="16" Text="0"/>
+                    <TextBlock x:Name="tbLancees" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" FontSize="16" Text="0"/>
+                    <TextBlock x:Name="tbRecues" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center" FontSize="16" Text="0"/>
+
+                </Grid>
+            </StackPanel>
+
+            <!--<Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -46,7 +75,7 @@
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-            </ListView>
+            </ListView>-->
         </Grid>
     </Grid>
 </Page>

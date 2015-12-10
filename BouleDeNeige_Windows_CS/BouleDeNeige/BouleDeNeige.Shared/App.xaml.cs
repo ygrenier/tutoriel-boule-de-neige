@@ -23,17 +23,11 @@ namespace BouleDeNeige
     /// </summary>
     sealed partial class App : Application
     {
-#if DEBUG
-        const String appUrl = "http://localhost:59487/";
-#else
-        const String appUrl = "https://bouledeneige.azurewebsites.net";
-#endif
-        // This MobileServiceClient has been configured to communicate with the Azure Mobile App.
-        // You're all set to start working with your Mobile App!
-        public static MobileServiceClient MobileService = new MobileServiceClient(
-            appUrl
-        );
 
+        /// <summary>
+        /// Service client
+        /// </summary>
+        public static ServiceClient ServiceClient = new ServiceClient();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
