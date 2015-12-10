@@ -21,6 +21,87 @@ namespace BouleDeNeige
         public MainPage()
         {
             this.InitializeComponent();
+            UpdateJoueurInfos(null);
+        }
+
+        void UpdateJoueurInfos(Joueur joueur)
+        {
+            if (joueur == null)
+            {
+                tbNomJoueur.IsEnabled = true;
+                tbNomJoueur.IsReadOnly = false;
+                btnCreerJoueur.Visibility = Visibility.Visible;
+                grdJoueurInfos.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                tbNomJoueur.Text = joueur.Nom;
+                tbNomJoueur.IsEnabled = false;
+                tbNomJoueur.IsReadOnly = true;
+                btnCreerJoueur.Visibility = Visibility.Collapsed;
+                grdJoueurInfos.Visibility = Visibility.Visible;
+                tbPoints.Text = joueur.Points.ToString();
+                tbRestantes.Text = joueur.BoulesRestantes.ToString();
+                tbRecues.Text = joueur.BoulesRecues.ToString();
+                tbLancees.Text = joueur.BoulesLancees.ToString();
+            }
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            await App.ServiceClient.Initialize();
+            UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
+        }
+
+        private async void btnCreerJoueur_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            try
+            {
+                btnCreerJoueur.IsEnabled = false;
+                tbNomJoueur.IsEnabled = false;
+                // On vérifie qu'un nom est saisi
+                if (String.IsNullOrWhiteSpace(tbNomJoueur.Text))
+                {
+                    var md = new MessageDialog("Veuillez saisir un nom de joueur.");
+                    md.Commands.Add(new UICommand("OK"));
+                    await md.ShowAsync();
+                    return;
+                }
+
+                // On vérifie si le nom existe 
+                var j = await App.ServiceClient.RechercheJoueurParNom(tbNomJoueur.Text);
+                if (j != null)
+                {
+                    var md = new MessageDialog("Ce joueur existe déjà, voulez-vous l'utiliser ?");
+                    md.Commands.Add(new UICommand("Oui"));
+                    md.Commands.Add(new UICommand("Non"));
+                    md.CancelCommandIndex = 1;
+                    md.DefaultCommandIndex = 0;
+                    var cmd = await md.ShowAsync();
+                    if (cmd.Label == "Non")
+                        return;
+                    // Définition du joueur en cours avec le joueur
+                    App.ServiceClient.DefinirJoueurEnCours(j);
+                }
+                else
+                {
+                    // Création d'un nouveau joueur
+                    j = await App.ServiceClient.CreerJoueur(tbNomJoueur.Text);
+                }
+                // Mise à jour de l'interface
+                UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
+            }
+            catch (Exception ex)
+            {
+                var md = new MessageDialog(ex.GetBaseException().Message, "Erreur");
+                md.Commands.Add(new UICommand("OK"));
+                await md.ShowAsync();
+            }
+            finally
+            {
+                btnCreerJoueur.IsEnabled = true;
+                tbNomJoueur.IsEnabled = true;
+            }
         }
 
         /*
