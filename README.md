@@ -22,6 +22,9 @@ La liste des articles qui composent le tutoriels :
 	- [Azure Mobile Apps : Ajout des contrôleurs API](http://blog.ygrenier.com/2015/12/azure-mobile-apps-ajout-controleurs-api/)
 	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-3
 
+- Quatrième Partie
+	- [Azure Mobile Apps: Mise en place du jeu](http://blog.ygrenier.com/2015/12/azure-mobile-apps-mise-en-place-du-jeu/)
+	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-4
 
 
 
