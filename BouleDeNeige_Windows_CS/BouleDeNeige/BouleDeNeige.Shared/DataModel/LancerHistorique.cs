@@ -12,5 +12,6 @@ namespace BouleDeNeige
         public String CibleId { get; set; }
         public String CibleNom { get; set; }
         public bool Success { get; set; }
+        public bool Avertir { get; set; }
     }
 }

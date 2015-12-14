@@ -67,6 +67,7 @@ namespace BouleDeNeige
             {
                 // Supprime l'ID du joueur qui n'existe plus apparemment
                 settings.Values.Remove("joueur");
+                settings.Values.Remove("dernier-historique");
                 return null;
             }
 
@@ -86,6 +87,7 @@ namespace BouleDeNeige
             if (this.JoueurEnCours== null)
             {
                 settings.Values.Remove("joueur");
+                settings.Values.Remove("dernier-historique");
             }
             else
             {
@@ -157,10 +159,28 @@ namespace BouleDeNeige
         /// </summary>
         public async Task<LancerHistorique[]> Historique()
         {
+            if (JoueurEnCours == null) return null;
             try
             {
+                // Récupération de la date du dernier historique
+                var settings = Windows.Storage.ApplicationData.Current.RoamingSettings;
+                DateTimeOffset? dernierHistorique = (DateTimeOffset?)settings.Values["dernier-historique"];
+
                 // Récupération de l"historique
-                return await MobileService.InvokeApiAsync<LancerHistorique[]>("lancer/LancerHistorique", HttpMethod.Get, null);
+                var result = await MobileService.InvokeApiAsync<LancerHistorique[]>("lancer/LancerHistorique", HttpMethod.Get, null);
+
+                // Mise à jour du résultat
+                foreach (var lancer in result)
+                {
+                    // On averti sur ce lancer si on a une date d'historique, et que le joueur est la cible du lancer
+                    lancer.Avertir = dernierHistorique.HasValue && lancer.CibleId == JoueurEnCours.Id && dernierHistorique.Value <= lancer.Date;
+                }
+
+                // Enregistre la date du dernier historique
+                settings.Values["dernier-historique"] = (DateTimeOffset?)DateTimeOffset.Now;
+
+                // Retourne le résultat
+                return result;
             }
             catch (MobileServiceInvalidOperationException mex)
             {

@@ -19,11 +19,28 @@ namespace BouleDeNeige
 {
     sealed partial class MainPage: Page
     {
+        DispatcherTimer timer;
+
         public MainPage()
         {
             this.InitializeComponent();
             this.tbAutreJoueurs.SelectionChanged += tbAutreJoueurs_SelectionChanged;
             UpdateJoueurInfos(null);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += async (s, e) =>
+            {
+                try {
+                    if (App.ServiceClient.JoueurEnCours != null)
+                    {
+                        App.ServiceClient.DefinirJoueurEnCours(await App.ServiceClient.RechercheJoueur(App.ServiceClient.JoueurEnCours.Id));
+                        await UpdateHistorique();
+                    }
+                }catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.GetBaseException().Message);
+                }
+            };
         }
 
         void UpdateJoueurInfos(Joueur joueur)
@@ -35,6 +52,7 @@ namespace BouleDeNeige
                 btnCreerJoueur.Visibility = Visibility.Visible;
                 grdJoueurInfos.Visibility = Visibility.Collapsed;
                 grdAutresJoueurs.Visibility = Visibility.Collapsed;
+                grdHistorique.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -48,6 +66,7 @@ namespace BouleDeNeige
                 tbRecues.Text = joueur.BoulesRecues.ToString();
                 tbLancees.Text = joueur.BoulesLancees.ToString();
                 grdAutresJoueurs.Visibility = Visibility.Visible;
+                grdHistorique.Visibility = Visibility.Visible;
             }
         }
 
@@ -69,7 +88,17 @@ namespace BouleDeNeige
             // Actualisation de l'historique
             if (App.ServiceClient.JoueurEnCours != null)
             {
-                tbHistorique.ItemsSource = (await App.ServiceClient.Historique());
+                var historique = (await App.ServiceClient.Historique());
+                tbHistorique.ItemsSource = historique;
+                foreach (var lancer in historique.Where(l => l.Avertir))
+                {
+                    String msg = lancer.Success 
+                        ? String.Format("{0} vous a touché le {1}", lancer.LanceurNom, lancer.Date)
+                        : String.Format("{0} vous a manqué le {1}", lancer.LanceurNom, lancer.Date);
+                    var dlg = new MessageDialog(msg);
+                    dlg.Commands.Add(new UICommand("OK"));
+                    await dlg.ShowAsync();
+                }
             }
         }
 
@@ -77,6 +106,7 @@ namespace BouleDeNeige
         {
             try
             {
+                timer.Stop();
                 // On demande confirmation
                 var dlg = new MessageDialog(String.Format("Voulez-vous lancer une boule de neige à {0} ?", cible.Nom), "Confirmation");
                 dlg.Commands.Add(new UICommand("Oui"));
@@ -119,6 +149,7 @@ namespace BouleDeNeige
             {
                 // On annule la sélection
                 tbAutreJoueurs.SelectedIndex = -1;
+                timer.Start();
             }
             return null;
         }
@@ -134,6 +165,7 @@ namespace BouleDeNeige
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            timer.Start();
             await App.ServiceClient.Initialize();
             UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
             await UpdateAutresJoueurs();
@@ -144,6 +176,7 @@ namespace BouleDeNeige
         {
             try
             {
+                timer.Stop();
                 btnCreerJoueur.IsEnabled = false;
                 tbNomJoueur.IsEnabled = false;
                 // On vérifie qu'un nom est saisi
@@ -190,6 +223,7 @@ namespace BouleDeNeige
             {
                 btnCreerJoueur.IsEnabled = true;
                 tbNomJoueur.IsEnabled = true;
+                timer.Start();
             }
         }
 
