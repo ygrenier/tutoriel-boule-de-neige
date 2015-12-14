@@ -62,8 +62,11 @@ namespace BouleDeNeigeService.Controllers
                     // Recalcul le nombre boules de la cible
                     if (succes)
                     {
-                        // La cible à reçue une boule
+                        // La cible à reçue une boule et elle perd un point
                         jCible.BoulesRecues++;
+                        jCible.Points--;
+                        // Le lanceur gagne un point
+                        jLanceur.Points++;
                     }
                     else
                     {
