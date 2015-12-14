@@ -12,6 +12,7 @@
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition MaxWidth="400" />
+            <ColumnDefinition MaxWidth="400" />
         </Grid.ColumnDefinitions>
 
         <StackPanel Margin="4">
@@ -75,6 +76,34 @@
             
         </StackPanel>
 
+        <Grid 
+            xmlns:conv="using:BouleDeNeige.Converters"
+            x:Name="grdHistorique" 
+            Grid.Column="1">
+            <Grid.Resources>
+                <conv:LancerHistoriqueToStringConverter x:Key="LancerHistoriqueToStringConverter" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock FontFamily="Segoe UI Light" FontSize="22">Historique</TextBlock>
+            <ListBox x:Name="tbHistorique" Grid.Row="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Date}" />
+                            <TextBlock Grid.Row="1" Text="{Binding Converter={StaticResource LancerHistoriqueToStringConverter}}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        
         <!--<Grid Margin="50,50,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

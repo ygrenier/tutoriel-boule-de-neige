@@ -64,6 +64,15 @@ namespace BouleDeNeige
             }
         }
 
+        async Task UpdateHistorique()
+        {
+            // Actualisation de l'historique
+            if (App.ServiceClient.JoueurEnCours != null)
+            {
+                tbHistorique.ItemsSource = (await App.ServiceClient.Historique());
+            }
+        }
+
         async Task<Lancer> LancerUneBoule(Joueur cible)
         {
             try
@@ -82,6 +91,7 @@ namespace BouleDeNeige
                 // On actualise les informations
                 UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
                 await UpdateAutresJoueurs();
+                await UpdateHistorique();
 
                 // Affiche le résultat
                 if (result.Succes)
@@ -127,6 +137,7 @@ namespace BouleDeNeige
             await App.ServiceClient.Initialize();
             UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
             await UpdateAutresJoueurs();
+            await UpdateHistorique();
         }
 
         private async void btnCreerJoueur_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -167,6 +178,7 @@ namespace BouleDeNeige
                 // Mise à jour de l'interface
                 UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
                 await UpdateAutresJoueurs();
+                await UpdateHistorique();
             }
             catch (Exception ex)
             {

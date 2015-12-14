@@ -12,8 +12,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\LancerHistoriqueToStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\Joueur.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\Lancer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\LancerHistorique.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\TodoItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ServiceClient.cs" />

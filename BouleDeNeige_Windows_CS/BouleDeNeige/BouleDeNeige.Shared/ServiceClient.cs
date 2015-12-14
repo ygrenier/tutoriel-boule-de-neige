@@ -153,6 +153,26 @@ namespace BouleDeNeige
         }
 
         /// <summary>
+        /// Retourne l'historique
+        /// </summary>
+        public async Task<LancerHistorique[]> Historique()
+        {
+            try
+            {
+                // Récupération de l"historique
+                return await MobileService.InvokeApiAsync<LancerHistorique[]>("lancer/LancerHistorique", HttpMethod.Get, null);
+            }
+            catch (MobileServiceInvalidOperationException mex)
+            {
+                var jValue = Newtonsoft.Json.Linq.JToken.Parse(await mex.Response.Content.ReadAsStringAsync());
+                var s = (String)jValue["message"];
+                if (!String.IsNullOrWhiteSpace(s))
+                    throw new Exception(s);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Service mobile
         /// </summary>
         public MobileServiceClient MobileService { get; private set; }
