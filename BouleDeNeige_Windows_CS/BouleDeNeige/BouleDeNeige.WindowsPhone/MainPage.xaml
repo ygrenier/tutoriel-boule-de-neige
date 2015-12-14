@@ -49,6 +49,66 @@
                     <TextBlock x:Name="tbRecues" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center" FontSize="16" Text="0"/>
 
                 </Grid>
+
+                <Grid x:Name="grdAutresJoueurs">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontFamily="Segoe UI Light" FontSize="22">Autres Joueurs</TextBlock>
+                    <ListBox x:Name="tbAutreJoueurs" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.ColumnSpan="4" Text="{Binding Nom}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="0">Points :</TextBlock>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Points}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="2">Boules restantes :</TextBlock>
+                                    <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding BoulesRestantes}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+
+                <Grid 
+                    xmlns:conv="using:BouleDeNeige.Converters"
+                    x:Name="grdHistorique" 
+                    >
+                    <Grid.Resources>
+                        <conv:LancerHistoriqueToStringConverter x:Key="LancerHistoriqueToStringConverter" />
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontFamily="Segoe UI Light" FontSize="22">Historique</TextBlock>
+                    <ListBox x:Name="tbHistorique" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{Binding Date}" />
+                                    <TextBlock Grid.Row="1" Text="{Binding Converter={StaticResource LancerHistoriqueToStringConverter}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+
             </StackPanel>
 
             <!--<Grid.RowDefinitions>

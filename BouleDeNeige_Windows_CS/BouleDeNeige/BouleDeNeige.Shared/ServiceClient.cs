@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +67,7 @@ namespace BouleDeNeige
             {
                 // Supprime l'ID du joueur qui n'existe plus apparemment
                 settings.Values.Remove("joueur");
+                settings.Values.Remove("dernier-historique");
                 return null;
             }
 
@@ -85,6 +87,7 @@ namespace BouleDeNeige
             if (this.JoueurEnCours== null)
             {
                 settings.Values.Remove("joueur");
+                settings.Values.Remove("dernier-historique");
             }
             else
             {
@@ -106,6 +109,87 @@ namespace BouleDeNeige
             DefinirJoueurEnCours(result);
             // Retourne le résultat
             return result;
+        }
+
+        /// <summary>
+        /// Retourne la liste des autres joueurs
+        /// </summary>
+        public async Task<IEnumerable<Joueur>> ListeAutreJoueurs()
+        {
+            if (JoueurEnCours == null) return null;
+            return await joueurTable.CreateQuery().Where(j => j.Id != JoueurEnCours.Id).ToListAsync();
+        }
+
+        /// <summary>
+        /// Lancer d'une boule à une cible
+        /// </summary>
+        public async Task<Lancer> LancerUneBoule(Joueur cible)
+        {
+            if (JoueurEnCours == null)
+                throw new InvalidOperationException("Aucun joueur n'est enregistré");
+            if (cible == null) throw new ArgumentNullException("cible");
+            if (cible.Id == JoueurEnCours.Id)
+                throw new ArgumentException("Impossible de se lancer une boule à soi-même");
+            if (JoueurEnCours.BoulesRestantes <= 0)
+                throw new InvalidOperationException("Vous n'avez plus de boules à lancer");
+            try
+            {
+                // Provoque le lancer
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args["lanceur"] = JoueurEnCours.Id;
+                args["cible"] = cible.Id;
+                var result = await MobileService.InvokeApiAsync<Lancer>("lancer/LancerUneBoule", HttpMethod.Get, args);
+                // Actualise le joueur
+                DefinirJoueurEnCours(await RechercheJoueur(JoueurEnCours.Id));
+
+                return result;
+            }
+            catch (MobileServiceInvalidOperationException mex)
+            {
+                var jValue = Newtonsoft.Json.Linq.JToken.Parse(await mex.Response.Content.ReadAsStringAsync());
+                var s = (String)jValue["message"];
+                if (!String.IsNullOrWhiteSpace(s))
+                    throw new Exception(s);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Retourne l'historique
+        /// </summary>
+        public async Task<LancerHistorique[]> Historique()
+        {
+            if (JoueurEnCours == null) return null;
+            try
+            {
+                // Récupération de la date du dernier historique
+                var settings = Windows.Storage.ApplicationData.Current.RoamingSettings;
+                DateTimeOffset? dernierHistorique = (DateTimeOffset?)settings.Values["dernier-historique"];
+
+                // Récupération de l"historique
+                var result = await MobileService.InvokeApiAsync<LancerHistorique[]>("lancer/LancerHistorique", HttpMethod.Get, null);
+
+                // Mise à jour du résultat
+                foreach (var lancer in result)
+                {
+                    // On averti sur ce lancer si on a une date d'historique, et que le joueur est la cible du lancer
+                    lancer.Avertir = dernierHistorique.HasValue && lancer.CibleId == JoueurEnCours.Id && dernierHistorique.Value <= lancer.Date;
+                }
+
+                // Enregistre la date du dernier historique
+                settings.Values["dernier-historique"] = (DateTimeOffset?)DateTimeOffset.Now;
+
+                // Retourne le résultat
+                return result;
+            }
+            catch (MobileServiceInvalidOperationException mex)
+            {
+                var jValue = Newtonsoft.Json.Linq.JToken.Parse(await mex.Response.Content.ReadAsStringAsync());
+                var s = (String)jValue["message"];
+                if (!String.IsNullOrWhiteSpace(s))
+                    throw new Exception(s);
+                throw;
+            }
         }
 
         /// <summary>

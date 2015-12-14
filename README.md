@@ -14,6 +14,7 @@ La liste des articles qui composent le tutoriels :
 - Première Partie
 	- [Azure Mobile Apps: Création d’une nouvelle application avec un backend .Net](http://blog.ygrenier.com/2015/12/azure-mobile-apps-creation-dune-nouvelle-application/)
 	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-1
+	
 - Deuxième Partie
 	- [Azure Mobile Apps: Modifier le contexte de données avec un backend en C#/.Net](http://blog.ygrenier.com/2015/12/azure-mobile-apps-modifier-le-contexte-de-donnees/)
 	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-2
@@ -26,5 +27,8 @@ La liste des articles qui composent le tutoriels :
 	- [Azure Mobile Apps: Mise en place du jeu](http://blog.ygrenier.com/2015/12/azure-mobile-apps-mise-en-place-du-jeu/)
 	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-4
 
+- Cinquième Partie
+	- [Azure Mobile Apps: Lancer une boule dans le jeu](http://blog.ygrenier.com/2015/12/azure-mobile-apps-lancer-une-boule-dans-le-jeu/)
+	- Release github : https://github.com/ygrenier/tutoriel-boule-de-neige/releases/tag/partie-5
 
 

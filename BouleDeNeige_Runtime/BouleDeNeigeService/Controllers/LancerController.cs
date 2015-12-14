@@ -19,6 +19,16 @@ namespace BouleDeNeigeService.Controllers
             public bool Succes { get; set; }
         }
 
+        public class LancerHistoriqueResult
+        {
+            public DateTimeOffset Date { get; set; }
+            public String LanceurId { get; set; }
+            public String LanceurNom { get; set; }
+            public String CibleId { get; set; }
+            public String CibleNom { get; set; }
+            public bool Success { get; set; }
+        }
+
         // GET api/Lancer
         //public string Get()
         //{
@@ -62,8 +72,11 @@ namespace BouleDeNeigeService.Controllers
                     // Recalcul le nombre boules de la cible
                     if (succes)
                     {
-                        // La cible à reçue une boule
+                        // La cible à reçue une boule et elle perd un point
                         jCible.BoulesRecues++;
+                        jCible.Points--;
+                        // Le lanceur gagne un point
+                        jLanceur.Points++;
                     }
                     else
                     {
@@ -80,6 +93,37 @@ namespace BouleDeNeigeService.Controllers
                         Cible = lancer.CibleId,
                         Succes = lancer.Success
                     });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GetBaseException().Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> LancerHistorique()
+        {
+            try
+            {
+                using (Models.BouleDeNeigeContext context = new Models.BouleDeNeigeContext())
+                {
+                    // Extraction des données
+                    return Ok<LancerHistoriqueResult[]>(await context.Lancers
+                        .Include(l => l.Cible)
+                        .Include(l => l.Lanceur)
+                        .OrderByDescending(l => l.Date)
+                        .Select(l => new LancerHistoriqueResult
+                        {
+                            Date = l.Date,
+                            CibleId = l.CibleId,
+                            CibleNom = l.Cible.Nom,
+                            LanceurId = l.LanceurId,
+                            LanceurNom = l.Lanceur.Nom,
+                            Success = l.Success
+                        })
+                        .ToArrayAsync()
+                    );
                 }
             }
             catch (Exception ex)

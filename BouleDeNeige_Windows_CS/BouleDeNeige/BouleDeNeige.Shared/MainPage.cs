@@ -7,6 +7,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using System.Linq;
 
 // To add offline sync support, add the NuGet package Microsoft.WindowsAzure.MobileServices.SQLiteStore
 // to your project. Then, uncomment the lines marked // offline sync
@@ -18,10 +19,28 @@ namespace BouleDeNeige
 {
     sealed partial class MainPage: Page
     {
+        DispatcherTimer timer;
+
         public MainPage()
         {
             this.InitializeComponent();
+            this.tbAutreJoueurs.SelectionChanged += tbAutreJoueurs_SelectionChanged;
             UpdateJoueurInfos(null);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += async (s, e) =>
+            {
+                try {
+                    if (App.ServiceClient.JoueurEnCours != null)
+                    {
+                        App.ServiceClient.DefinirJoueurEnCours(await App.ServiceClient.RechercheJoueur(App.ServiceClient.JoueurEnCours.Id));
+                        await UpdateHistorique();
+                    }
+                }catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.GetBaseException().Message);
+                }
+            };
         }
 
         void UpdateJoueurInfos(Joueur joueur)
@@ -32,6 +51,8 @@ namespace BouleDeNeige
                 tbNomJoueur.IsReadOnly = false;
                 btnCreerJoueur.Visibility = Visibility.Visible;
                 grdJoueurInfos.Visibility = Visibility.Collapsed;
+                grdAutresJoueurs.Visibility = Visibility.Collapsed;
+                grdHistorique.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -44,19 +65,118 @@ namespace BouleDeNeige
                 tbRestantes.Text = joueur.BoulesRestantes.ToString();
                 tbRecues.Text = joueur.BoulesRecues.ToString();
                 tbLancees.Text = joueur.BoulesLancees.ToString();
+                grdAutresJoueurs.Visibility = Visibility.Visible;
+                grdHistorique.Visibility = Visibility.Visible;
             }
+        }
+
+        async Task UpdateAutresJoueurs()
+        {
+            // On actualise les joueurs ?
+            if (App.ServiceClient.JoueurEnCours != null)
+            {
+                tbAutreJoueurs.ItemsSource = (await App.ServiceClient.ListeAutreJoueurs())
+                    .OrderByDescending(jo => jo.Points)
+                    .ThenByDescending(jo => jo.BoulesRestantes)
+                    .ToList()
+                    ;
+            }
+        }
+
+        async Task UpdateHistorique()
+        {
+            // Actualisation de l'historique
+            if (App.ServiceClient.JoueurEnCours != null)
+            {
+                var historique = (await App.ServiceClient.Historique());
+                tbHistorique.ItemsSource = historique;
+                foreach (var lancer in historique.Where(l => l.Avertir))
+                {
+                    String msg = lancer.Success 
+                        ? String.Format("{0} vous a touché le {1}", lancer.LanceurNom, lancer.Date)
+                        : String.Format("{0} vous a manqué le {1}", lancer.LanceurNom, lancer.Date);
+                    var dlg = new MessageDialog(msg);
+                    dlg.Commands.Add(new UICommand("OK"));
+                    await dlg.ShowAsync();
+                }
+            }
+        }
+
+        async Task<Lancer> LancerUneBoule(Joueur cible)
+        {
+            try
+            {
+                timer.Stop();
+                // On demande confirmation
+                var dlg = new MessageDialog(String.Format("Voulez-vous lancer une boule de neige à {0} ?", cible.Nom), "Confirmation");
+                dlg.Commands.Add(new UICommand("Oui"));
+                dlg.Commands.Add(new UICommand("Non"));
+                dlg.CancelCommandIndex = 1;
+                dlg.DefaultCommandIndex = 0;
+                var cmd = await dlg.ShowAsync();
+                if (cmd.Label == "Non") return null;
+
+                // Provoque le lancer
+                var result = await App.ServiceClient.LancerUneBoule(cible);
+                // On actualise les informations
+                UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
+                await UpdateAutresJoueurs();
+                await UpdateHistorique();
+
+                // Affiche le résultat
+                if (result.Succes)
+                {
+                    dlg = new MessageDialog("Vous avez touché votre cible !");
+                    dlg.Commands.Add(new UICommand("OK"));
+                    await dlg.ShowAsync();
+                }
+                else
+                {
+                    dlg = new MessageDialog("Vous avez manqué votre cible !");
+                    dlg.Commands.Add(new UICommand("OK"));
+                    await dlg.ShowAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var dlg = new MessageDialog(ex.GetBaseException().Message);
+                dlg.Commands.Add(new UICommand("OK"));
+                await dlg.ShowAsync();
+            }
+            finally
+            {
+                // On annule la sélection
+                tbAutreJoueurs.SelectedIndex = -1;
+                timer.Start();
+            }
+            return null;
+        }
+
+        private async void tbAutreJoueurs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Recherche le joueur sélectionné
+            var joueur = tbAutreJoueurs.SelectedItem as Joueur;
+            if (joueur == null) return;
+
+            await LancerUneBoule(joueur);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            timer.Start();
             await App.ServiceClient.Initialize();
             UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
+            await UpdateAutresJoueurs();
+            await UpdateHistorique();
         }
 
         private async void btnCreerJoueur_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             try
             {
+                timer.Stop();
                 btnCreerJoueur.IsEnabled = false;
                 tbNomJoueur.IsEnabled = false;
                 // On vérifie qu'un nom est saisi
@@ -90,6 +210,8 @@ namespace BouleDeNeige
                 }
                 // Mise à jour de l'interface
                 UpdateJoueurInfos(App.ServiceClient.JoueurEnCours);
+                await UpdateAutresJoueurs();
+                await UpdateHistorique();
             }
             catch (Exception ex)
             {
@@ -101,6 +223,7 @@ namespace BouleDeNeige
             {
                 btnCreerJoueur.IsEnabled = true;
                 tbNomJoueur.IsEnabled = true;
+                timer.Start();
             }
         }
 
